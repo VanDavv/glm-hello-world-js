@@ -6,7 +6,7 @@ async function main() {
   const task_package = await vm.repo({
     image_hash: "977cae92e8dbd509247ee23b5e8c7ed6b99e52ed5b54f30b7c2d771a",
   });
-  const tasks = [new Task({})];
+  const tasks = [new Task(process.argv[2])];
 
   async function* worker(context, tasks) {
     for await (let task of tasks) {
@@ -19,7 +19,7 @@ async function main() {
   }
 
   const executor = new Executor({ task_package, budget: "1.0", subnet_tag: "devnet-beta" });
-  await executor.ready(async (executor) => {
+  await executor.run(async (executor) => {
     for await (let completed of executor.submit(worker, tasks)) {
       console.log(completed.result().stdout);
     }
